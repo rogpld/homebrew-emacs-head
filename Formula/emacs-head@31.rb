@@ -248,6 +248,16 @@ class EmacsHeadAT31 < EmacsBase
       prefix.install "nextstep/Emacs.app"
       (prefix/"Emacs.app/Contents").install "native-lisp" if build.with? "native-comp"
 
+      # IGC PDUMPER FIX
+      # Symlink the data directories directly into the macOS app bundle.
+      # This forces ns_init_paths() to override the /private/tmp paths hardcoded by pdumper.
+      app_resources = prefix/"Emacs.app/Contents/Resources"
+      mkdir_p app_resources
+      ln_sf share/"emacs/#{version}/etc", app_resources/"etc"
+      ln_sf share/"emacs/#{version}/lisp", app_resources/"lisp"
+      ln_sf share/"emacs/#{version}/info", app_resources/"info"
+    
+
       # Install Assets.car for Tahoe icon support
       install_tahoe_assets_car("#{prefix}/Emacs.app/Contents/Resources", selected_icon)
 
